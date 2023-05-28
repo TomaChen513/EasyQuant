@@ -67,6 +67,5 @@ if __name__ == '__main__':
     # 绘图
     cerebro.plot(style='candlestick', fileName='./test.png')
     
-    ds.test()
     ds._parseDateTime("20210506")
     
