@@ -5,12 +5,36 @@ import backtrader as bt
 import matplotlib.pyplot as plt
 import common.akdata as ds
 
+# 股票模式
+class StockCommission(bt.CommInfoBase):
+    params = (
+      ('stocklike', True), # 指定为期货模式
+      ('commtype', bt.CommInfoBase.COMM_PERC), # 使用百分比费用模式
+      ('percabs', True), # commission 不以 % 为单位
+      ('stamp_duty', 0.001),) # 印花税默认为 0.1%
+    
+    # 自定义费用计算公式
+    def _getcommission(self, size, price, pseudoexec):
+            if size > 0: # 买入时，只考虑佣金
+                return abs(size) * price * self.p.commission 
+            elif size < 0: # 卖出时，同时考虑佣金和印花税
+                return abs(size) * price * (self.p.commission + self.p.stamp_duty) 
+            else:
+                return 0
+
+
 class MyStrategy(bt.Strategy):
     def __init__(self):
         print("init")
 
     def next(self):
         print('当前可用资金', self.broker.getcash())
+        print('当前总资产', self.broker.getvalue())
+        print('当前持仓量', self.broker.getposition(self.data).size)
+        print('当前持仓成本', self.broker.getposition(self.data).price)
+        # 也可以直接获取持仓
+        print('当前持仓量', self.getposition(self.data).size)
+        print('当前持仓成本', self.getposition(self.data).price)
 
     def log(self, txt, dt=None, do_print=False):
         print(self.datas[0].datetime.date(0))

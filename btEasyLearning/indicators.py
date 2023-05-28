@@ -1,6 +1,6 @@
 import backtrader as bt
 import matplotlib.pyplot as plt
-import data.akdata as ds
+import common.akdata as ds
 
 
 class MyStrategy(bt.Strategy):
