@@ -12,7 +12,9 @@ class MyStrategy(bt.Strategy):
     def next(self):
         print('当前可用资金', self.broker.getcash())
 
+    # 打印日志
     def log(self, txt, dt=None, do_print=False):
+        dt=dt or self.datas[0].datetime.date(0)
         print(self.datas[0].datetime.date(0))
 
 

@@ -1,3 +1,11 @@
+backtrader文档：
+
+https://www.backtrader.com/docu/
+
+akshare文档：
+
+https://akshare.akfamily.xyz/
+
 指标查看文档：
 
 https://www.backtrader.com/docu/indautoref/
