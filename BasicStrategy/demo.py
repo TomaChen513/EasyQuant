@@ -1,8 +1,9 @@
-import sys
-sys.path.append(r"/root/projects/quant")
-import common.akdata as ds
-import matplotlib.pyplot as plt
 import backtrader as bt
+import matplotlib.pyplot as plt
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.abspath(__file__)) + "/..")
+import common.akdata as ds
 
 
 
@@ -36,7 +37,7 @@ class S(bt.Strategy):
         # 策略正常运行阶段，对应第min_period+1根bar-最后一根bar
         # 主要的策略逻辑都是写在该函数下
         # 进入该阶段后，会依次在每个bar上循环运行next函数
-        self.log("Close, %.2f" % self.dataclose[0])
+        self.log("Close, %.2f" % self.close[0])
         if self.order:
             return
 
