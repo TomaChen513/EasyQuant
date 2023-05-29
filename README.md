@@ -18,6 +18,12 @@ https://www.ta-lib.org/
 
 https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzAxNTc0Mjg0Mg==&action=getalbum&album_id=2380299870701420545&scene=173&from_msgid=2653316888&from_itemidx=1&count=3&nolastread=1#wechat_redirect
 
+单因子回测
+
+Alphalens
+
+强化学习
+
 ### bt交易流程
 1. 设置初始交易条件：初始资金、交易税费、滑点、成交量限制等；
 2. 完善策略逻辑中交易指令 buy、sell、close，或取消交易 cancel

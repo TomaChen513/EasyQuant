@@ -25,10 +25,14 @@ class S(bt.Strategy):
         '''初始化属性、计算指标等'''
         # 指标计算可参考《backtrader指标篇》
         self.dataclose=self.datas[0].close
+        self.dataopen=self.datas[0].open
+        self.datahigh=self.datas[0].high
+        self.datalow=self.datas[0].low
+        
+        
         self.order=None
         self.buyprice=None
         self.buycomm=None
-        pass
 
     def next(self):
         # 策略正常运行阶段，对应第min_period+1根bar-最后一根bar
@@ -37,6 +41,28 @@ class S(bt.Strategy):
         self.log("Close, %.2f" % self.dataclose[0])
         if self.order:
             return
+        
+        if not self.position:
+            # condition1=self.dataclose[-1]<self.dataclose[-2]<self.dataclose[-3]
+            if self.dataclose[-1]<self.dataopen[-1]:
+                harami=(
+                    self.dataclose[0]<self.dataopen[-1]
+                    and self.datalow[0]>self.dataclose[-1]
+                )
+            else:
+                harami=(
+                    self.datahigh[0]<self.dataclose[-1]
+                    and self.datalow[0]>self.dataopen[-1]
+                )
+            if harami:
+                self.log("BUY CREATE, %.2f" % self.dataclose[0])
+                self.order = self.buy()
+        else:
+            condition = (self.dataclose[0] - self.bar_executed_close) / self.dataclose[0]
+            if condition > 0.1 or condition < -0.1:
+                self.log("SELL CREATE, %.2f" % self.dataclose[0])
+                self.order = self.sell()
+
         
 
     # 日志打印：参考的官方文档
@@ -107,7 +133,7 @@ if __name__ == '__main__':
     cerebro.addstrategy(S)
 
     # 添加数据
-    cerebro.adddata(ds.SzStandardData(start_date="20230415"))
+    cerebro.adddata(ds.SzStandardData(start_date="20210415"))
 
     # 资金管理
     cerebro.broker.setcash(100000)

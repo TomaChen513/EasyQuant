@@ -1,8 +1,8 @@
 import sys
 sys.path.append(r"/root/projects/quant")
-import backtrader as bt
-import matplotlib.pyplot as plt
 import common.akdata as ds
+import matplotlib.pyplot as plt
+import backtrader as bt
 
 
 
@@ -21,10 +21,15 @@ class S(bt.Strategy):
     def __init__(self):
         '''初始化属性、计算指标等'''
         # 指标计算可参考《backtrader指标篇》
-        self.dataclose=self.datas[0].close
-        self.order=None
-        self.buyprice=None
-        self.buycomm=None
+        self.close = self.datas[0].close
+        self.open = self.datas[0].open
+        self.high = self.datas[0].high
+        self.low = self.datas[0].low
+        self.volume = self.datas[0].volume
+
+        self.order = None
+        self.buyprice = None
+        self.buycomm = None
         pass
 
     def next(self):
@@ -34,9 +39,9 @@ class S(bt.Strategy):
         self.log("Close, %.2f" % self.dataclose[0])
         if self.order:
             return
-        
 
     # 日志打印：参考的官方文档
+
     def log(self, txt, dt=None, doprint=False):
         '''构建策略打印日志的函数：可用于打印订单记录或交易记录等'''
         if doprint:
@@ -123,4 +128,5 @@ if __name__ == '__main__':
     print("期末总资金: %.2f" % cerebro.broker.getvalue())
 
     # 绘图
-    cerebro.plot(style='candlestick', fileName='/root/projects/quant/result.png')
+    cerebro.plot(style='candlestick',
+                 fileName='/root/projects/quant/result.png')
