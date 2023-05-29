@@ -7,7 +7,16 @@ import common.akdata as ds
 
 
 ''' 
-策略说明
+策略说明:KDJ策略
+计算方法：
+RSV = （收盘价-N周期最低价)/(N周期最高价-N周期最低价)*100
+K值 = RSV的N周期加权移动平均值
+D值 = K值的N周期加权移动平均值
+J值 = 3K-2D
+一般来说，RSV的N周期选择9，K和D的N周期选择3。
+
+当J值上穿K值的时候，是买入信号，此时买入。
+当J值下穿K值的时候，是卖出信号，此时卖出。
 '''
 
 
@@ -20,11 +29,17 @@ class S(bt.Strategy):
     # 初始化函数
     def __init__(self):
         '''初始化属性、计算指标等'''
-        # 指标计算可参考《backtrader指标篇》
         self.dataclose=self.datas[0].close
         self.order=None
         self.buyprice=None
         self.buycomm=None
+        
+        self.highNine=bt.indicators.Highest(self.data.high,period=9)
+        self.lowNine = bt.indicators.Lowest(self.data.low, period=9)
+        self.rsv=100*bt.DivByZero(self.dataclose-self.lowNine,self.highNine-self.lowNine,zero=None)
+        self.K=bt.indicators.EMA(self.rsv,period=3)
+        self.D = bt.indicators.EMA(self.K, period=3)
+        self.J = 3 * self.K - 2 * self.D
         pass
 
     def next(self):
@@ -35,6 +50,19 @@ class S(bt.Strategy):
         if self.order:
             return
         
+        if not self.position:
+            # J - D 值
+            condition1 = self.J[-1] - self.D[-1]
+            condition2 = self.J[0] - self.D[0]
+            if condition1 < 0 and condition2 > 0:
+                self.log("BUY CREATE, %.2f" % self.dataclose[0])
+                self.order = self.buy()
+
+        else:
+            if condition1 > 0 or condition2 < 0:
+                self.log("SELL CREATE, %.2f" % self.dataclose[0])
+                self.order = self.sell()
+        pass
 
     # 日志打印：参考的官方文档
     def log(self, txt, dt=None, doprint=False):

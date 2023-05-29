@@ -3,13 +3,23 @@ sys.path.append(r"/root/projects/quant")
 import backtrader as bt
 import matplotlib.pyplot as plt
 import common.akdata as ds
+from backtrader.indicators import EMA
 
 
 
-''' 
-策略说明
+
 '''
-
+策略说明
+MACD金叉死叉策略
+MACD=价格EMA(12) - 价格EMA(26).
+信号线=MACD的EMA(9) 
+买入：
+当 MACD线在前一天的值 < 信号线前一天的值
+且 当天MACD线的值 > 当天信号线的值时
+说明发生了金叉，此时看涨，第二天买入。
+卖出：
+若已盈利10%，则卖出;若已亏损10%，则卖出。
+'''
 
 class S(bt.Strategy):
     # 初始化策略参数
@@ -20,21 +30,35 @@ class S(bt.Strategy):
     # 初始化函数
     def __init__(self):
         '''初始化属性、计算指标等'''
-        # 指标计算可参考《backtrader指标篇》
         self.dataclose=self.datas[0].close
         self.order=None
         self.buyprice=None
         self.buycomm=None
-        pass
+        
+        self.ema9=bt.indicators.EMA(self.datas[0],period=9)
+        self.ema12=bt.indicators.EMA(self.datas[0],period=12)
+        self.ema26=bt.indicators.EMA(self.datas[0],period=26)
+        self.macd=self.ema12-self.ema26
+        self.signal=bt.indicators.EMA(self.macd,period=9)
+
+        
 
     def next(self):
         # 策略正常运行阶段，对应第min_period+1根bar-最后一根bar
-        # 主要的策略逻辑都是写在该函数下
-        # 进入该阶段后，会依次在每个bar上循环运行next函数
-        self.log("Close, %.2f" % self.dataclose[0])
+        self.log('Close, %.2f' % self.dataclose[0])
         if self.order:
-            return
-        
+            return    
+        if not self.position:
+            condition1=self.macd[-1]-self.signal[-1]
+            condition2=self.macd[0]-self.signal[0]
+            if condition1<0 and condition2>0:
+                self.log('BUY CREATE, %.2f' % self.dataclose[0])
+                self.order = self.buy()
+        else:
+            condition = (self.dataclose[0] - self.bar_executed_close) / self.dataclose[0]
+            if condition>0.1 or condition<-0.1:
+                self.log('SELL CREATE, %.2f' % self.dataclose[0])
+                self.order = self.sell()
 
     # 日志打印：参考的官方文档
     def log(self, txt, dt=None, doprint=False):
@@ -104,7 +128,7 @@ if __name__ == '__main__':
     cerebro.addstrategy(S)
 
     # 添加数据
-    cerebro.adddata(ds.SzStandardData(start_date="20230415"))
+    cerebro.adddata(ds.SzStandardData(code="603186",start_date="20190301",end_date="20200301"))
 
     # 资金管理
     cerebro.broker.setcash(100000)
@@ -123,4 +147,4 @@ if __name__ == '__main__':
     print("期末总资金: %.2f" % cerebro.broker.getvalue())
 
     # 绘图
-    cerebro.plot(style='candlestick', fileName='/root/projects/quant/result.png')
+    cerebro.plot(style='candlestick', fileName='./test.png')
