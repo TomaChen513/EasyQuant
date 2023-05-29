@@ -1,6 +1,6 @@
 ## Introduction(Continuously Updating~)
 本项目是一个量化策略集合，对常用的策略进行建模回测。主要使用的工具有backtrader和akshare。backtrader用于建立回测模型，akshare则是获得开源的公开数据。下面是所使用工具的简单介绍：
-### backtrader
+### Backtrader
 Backtrader是一个基于Python的自动化回溯测试框架，作者是德国人 Daniel Rodriguez，是一个易懂、易上手的量化投资框架。
 
 文档：https://www.backtrader.com/docu/
