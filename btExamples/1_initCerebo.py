@@ -7,7 +7,7 @@ if __name__ == '__main__':
     # 初始化cerebro
     cerebro = bt.Cerebro()
     # 设置本金
-    cerebro.broker.setcash(1000)
+    cerebro.broker.setcash(10000)
     # 设置百分比佣金，单位是百分数
     cerebro.broker.setcommission(commission=0.005)
     # 设置百分比滑点

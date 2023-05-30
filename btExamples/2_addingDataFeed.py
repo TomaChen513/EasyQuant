@@ -14,15 +14,14 @@ if __name__ == '__main__':
     # 初始化cerebro
     cerebro = bt.Cerebro()
     # 设置本金
-    cerebro.broker.setcash(1000)
+    cerebro.broker.setcash(10000)
     # 设置百分比佣金，单位是百分数
     cerebro.broker.setcommission(commission=0.005)
     # 设置百分比滑点
     cerebro.broker.set_slippage_perc(perc=0.0001)
 
     # 加载数据,添加了002373(千方科技)从2022年4月15日到2023年4月15日的数据
-    cerebro.adddata(ds.SzStandardData(
-        code="002373", start_date="20220415", end_date="20230415"))
+    cerebro.adddata(ds.SzStandardData(code="002373",start_date="20220415", end_date="20230415"))
 
     print('起始本金: %.2f' % cerebro.broker.getvalue())
     cerebro.run()
