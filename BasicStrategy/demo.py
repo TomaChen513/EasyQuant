@@ -42,7 +42,6 @@ class S(bt.Strategy):
             return
 
     # 日志打印：参考的官方文档
-
     def log(self, txt, dt=None, doprint=False):
         '''构建策略打印日志的函数：可用于打印订单记录或交易记录等'''
         if doprint:
@@ -110,7 +109,7 @@ if __name__ == '__main__':
     cerebro.addstrategy(S)
 
     # 添加数据
-    cerebro.adddata(ds.SzStandardData(start_date="20230415"))
+    cerebro.adddata(ds.SzStandardData(start_date="10230415"))
 
     # 资金管理
     cerebro.broker.setcash(100000)

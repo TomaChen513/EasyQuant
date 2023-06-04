@@ -31,3 +31,6 @@ AKShare 是基于 Python 的财经数据接口库，目的是实现对股票、�
 ## Future Work
 * Alphalens教程
 * 强化学习于量化交易的应用
+
+
+https://github.com/QuantWorld2022/backtrader
